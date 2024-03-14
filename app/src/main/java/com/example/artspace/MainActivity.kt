@@ -1,8 +1,13 @@
 package com.example.artspace
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.layout.getDefaultLazyLayoutKey
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,9 +31,16 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.core.content.res.TypedArrayUtils.getNamedString
+import androidx.core.content.res.TypedArrayUtils.getString
+import androidx.core.content.res.TypedArrayUtils.getText
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -105,16 +118,20 @@ fun ArtWall(
   // TODO: 4. Add image of artwork
 
   // TODO: 5. Add a click listener to navigate to the artist page
-  // to navigate to the artist page, use the following code:
-  // navController.navigate(Screen.Artist.route + "/$artistId")
-  // see example below.
 
-  // <--- Safely REMOVE the following code and ADD your code here --->
+  val currentArtWork = painterResource(artImageId)
+//  val currArtDesc = getString(artDescriptionId)
   Box(modifier = Modifier.clickable {
     navController.navigate(Screen.Artist.route + "/$artistId")
+
   }) {
-    Text(text = "(A) Display Artwork Image here as per the design")
+    Image(painter = currentArtWork,
+          contentDescription = null ,
+          modifier = Modifier
+            .padding(15.dp))
+
   }
+
 }
 
 @Composable
@@ -197,6 +214,8 @@ fun HomePage(navController: NavController) {
           horizontalArrangement = Arrangement.Center,
         ) {
           ArtWall(current, art.artworkImageId, art.descriptionId, navController)
+          val testString = (R.string.art_1_description).toString()
+          Log.v("tag", testString)
         }
       }
       // (a) children without weight
@@ -213,5 +232,6 @@ fun HomePage(navController: NavController) {
 fun ArtSpaceAppPreview() {
   ArtSpaceTheme {
     HomePage(rememberNavController())
+
   }
 }
