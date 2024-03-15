@@ -1,9 +1,14 @@
 package com.example.artspace
 
+import android.graphics.fonts.FontStyle.FONT_WEIGHT_BOLD
+import android.os.Build
 import android.os.Bundle
+import android.text.Layout
 import android.util.Log
+import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,9 +19,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.layout.getDefaultLazyLayoutKey
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -30,14 +38,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role.Companion.Button
 import androidx.compose.ui.semantics.Role.Companion.Image
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.res.TypedArrayUtils.getNamedString
 import androidx.core.content.res.TypedArrayUtils.getString
 import androidx.core.content.res.TypedArrayUtils.getText
@@ -120,7 +135,7 @@ fun ArtWall(
   // TODO: 5. Add a click listener to navigate to the artist page
 
   val currentArtWork = painterResource(artImageId)
-//  val currArtDesc = getString(artDescriptionId)
+//  val currDesc = getString(artDescriptionId)
   Box(modifier = Modifier.clickable {
     navController.navigate(Screen.Artist.route + "/$artistId")
 
@@ -128,12 +143,14 @@ fun ArtWall(
     Image(painter = currentArtWork,
           contentDescription = null ,
           modifier = Modifier
-            .padding(15.dp))
+            .padding(15.dp)
+            .align(alignment = Alignment.Center))
 
   }
 
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun ArtDescriptor(artTitleId: Int, artistId: Int, artYearId: Int) {
 
@@ -144,9 +161,35 @@ fun ArtDescriptor(artTitleId: Int, artistId: Int, artYearId: Int) {
   // TODO: 7. Add artist name and year of artwork
 
   // <--- Safely REMOVE the following code and ADD your code here --->
-  Text(text = "(B) Display Artwork Title, Artist Name and Year here as per the design")
-}
 
+  val artTitle = stringResource(id = artTitleId)
+  val artistName = stringResource(id = artistId)
+  val artYear = stringResource(id = artYearId)
+
+  Box (modifier = Modifier
+    .fillMaxWidth()
+    .padding(15.dp)){
+    Column (
+      horizontalAlignment = Alignment.CenterHorizontally,
+      modifier = Modifier
+        .align(Alignment.Center)
+        .fillMaxWidth()
+    ){
+      Text(
+        text = artTitle,
+        fontSize = 25.sp,
+        fontWeight = FontWeight(FONT_WEIGHT_BOLD),
+        lineHeight = 40.sp,
+        textAlign = TextAlign.Center)
+      Text(
+        text = "$artistName $artYear",
+        fontSize = 18.sp,
+        lineHeight = 40.sp,
+        textAlign = TextAlign.Center)
+      }
+    }
+
+  }
 
 @Composable
 fun DisplayController(current: Int, move: (Int) -> Unit) {
@@ -167,8 +210,30 @@ fun DisplayController(current: Int, move: (Int) -> Unit) {
   // move(current + 1) // for the next button
 
   // <--- Safely REMOVE the following code and ADD your code here --->
-  Text(text = "(C) Display buttons to navigate to the previous and next artwork here as per the design")
-
+  Box(modifier = Modifier
+    .fillMaxWidth()
+    .padding(25.dp)) {
+    Row(
+      horizontalArrangement = Arrangement.Center,
+      modifier = Modifier
+        .align(Alignment.Center)
+        .fillMaxWidth()
+    ){
+      Button(onClick = { /*TODO*/ }, modifier = Modifier
+        .height(50.dp)
+        .width(150.dp))
+      {
+        Text(text = "Previous")
+      }
+      Button(onClick = { /*TODO*/ }, modifier = Modifier
+        .padding(start = 20.dp)
+        .height(50.dp)
+        .width(150.dp))
+      {
+        Text(text = "Next")
+      }
+    }
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -214,8 +279,6 @@ fun HomePage(navController: NavController) {
           horizontalArrangement = Arrangement.Center,
         ) {
           ArtWall(current, art.artworkImageId, art.descriptionId, navController)
-          val testString = (R.string.art_1_description).toString()
-          Log.v("tag", testString)
         }
       }
       // (a) children without weight
@@ -227,7 +290,9 @@ fun HomePage(navController: NavController) {
   }
 }
 
-@Preview(showBackground = true)
+@Preview(
+  showBackground = true,
+  showSystemUi = true)
 @Composable
 fun ArtSpaceAppPreview() {
   ArtSpaceTheme {
