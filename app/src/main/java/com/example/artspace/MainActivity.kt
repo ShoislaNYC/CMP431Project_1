@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.layout.getDefaultLazyLayoutKey
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -46,7 +47,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -117,35 +120,49 @@ fun ArtistPage(navController: NavController) {
   Column (
     modifier = Modifier
       .verticalScroll(rememberScrollState())
-      .safeDrawingPadding(),
+      .fillMaxWidth()
+      .padding(16.dp),
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Center
   ) {
-    Row {
-      Column (
-      ){
+    Row (
+      verticalAlignment = Alignment.CenterVertically,
+//      modifier = Modifier
+    ) {
+      Image(
+        painter = artistImage,
+        contentDescription = description,
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+          .padding(15.dp)
+          .size(150.dp)
+          .clip(CircleShape)
+          .border(
+            BorderStroke(4.dp, Color.Gray),
+            CircleShape
+          )
+      )
+            Column {
         Text(
-          text = stringResource(id =art.titleId),
-          fontSize = 25.sp,
+          text = title,
+          fontSize = 23.sp,
           fontWeight = FontWeight(FONT_WEIGHT_BOLD),
-          lineHeight = 40.sp,
+          lineHeight = 20.sp,
           textAlign = TextAlign.Center)
         Text(
           text = "$artistInfo $year",
-          fontSize = 18.sp,
-          lineHeight = 40.sp,
+          fontSize = 15.sp,
+          lineHeight = 20.sp,
           textAlign = TextAlign.Center)
-        }
-      Image(
-        painter = artistImage,
-        contentDescription = artistInfo,
-        modifier = Modifier
-          .fillMaxWidth()
-          .padding(10.dp))
       }
+    }
+
+
+
     // ARTIST PAGE section B
     // TODO: 2  Artist bio
-    Text(text = artistBio)
+    Spacer(modifier = Modifier.padding(16.dp))
+    Text(text = " " + artistBio)
     Button(onClick = {
       navController.navigate(Screen.Home.route + "/$id")
     }) {
@@ -265,13 +282,13 @@ fun DisplayController(current: Int, move: (Int) -> Unit) {
         .align(Alignment.Center)
         .fillMaxWidth()
     ){
-      Button(onClick = { /*TODO*/ }, modifier = Modifier
+      Button(onClick = {move(current-1)}, modifier = Modifier
         .height(50.dp)
         .width(150.dp))
       {
         Text(text = "Previous")
       }
-      Button(onClick = { /*TODO*/ }, modifier = Modifier
+      Button(onClick = {move(current+1)}, modifier = Modifier
         .padding(start = 20.dp)
         .height(50.dp)
         .width(150.dp))
@@ -343,7 +360,7 @@ fun HomePage(navController: NavController) {
 @Composable
 fun ArtSpaceAppPreview() {
   ArtSpaceTheme {
-//    HomePage(rememberNavController())
-    ArtistPage(rememberNavController())
+    HomePage(rememberNavController())
+//    ArtistPage(rememberNavController())
   }
 }
