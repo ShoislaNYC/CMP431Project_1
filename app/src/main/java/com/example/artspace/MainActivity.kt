@@ -5,10 +5,13 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Layout
 import android.util.Log
+import android.webkit.WebSettings.TextSize
 import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
+import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,9 +26,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.layout.getDefaultLazyLayoutKey
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -98,27 +104,67 @@ class MainActivity : ComponentActivity() {
 fun ArtistPage(navController: NavController) {
   val id = navController.currentBackStackEntry?.arguments?.getInt("id") ?: 0
   val art = DataSource.arts[id]
+  val artist = stringResource(id = art.artistId)
+  val artistInfo = stringResource(id = art.artistInfoId)
+  val title = stringResource(id = art.titleId)
+  val year = stringResource(id = art.yearId)
+  val description = stringResource(id = art.descriptionId)
+  val artistBio = stringResource(id = art.artistBioId)
+  val artistImage = painterResource(id = art.artistImageId)
 
   // ARTIST PAGE section A
   // TODO: 1. Artist Profile including image, name, and info (birthplace, and years alive)
+  Column (
+    modifier = Modifier
+      .verticalScroll(rememberScrollState())
+      .safeDrawingPadding(),
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.Center
+  ) {
+    Row {
+      Column (
+      ){
+        Text(
+          text = stringResource(id =art.titleId),
+          fontSize = 25.sp,
+          fontWeight = FontWeight(FONT_WEIGHT_BOLD),
+          lineHeight = 40.sp,
+          textAlign = TextAlign.Center)
+        Text(
+          text = "$artistInfo $year",
+          fontSize = 18.sp,
+          lineHeight = 40.sp,
+          textAlign = TextAlign.Center)
+        }
+      Image(
+        painter = artistImage,
+        contentDescription = artistInfo,
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(10.dp))
+      }
+    // ARTIST PAGE section B
+    // TODO: 2  Artist bio
+    Text(text = artistBio)
+    Button(onClick = {
+      navController.navigate(Screen.Home.route + "/$id")
+    }) {
+      Text(text = stringResource(id = R.string.back))
+    }
 
-  // ARTIST PAGE section B
-  // TODO: 2  Artist bio
+    }
 
-  // <--- Safely REMOVE the following code and ADD your code here --->
-//  Text(text = "(D) Display Artist Profile and Bio here as per the design")
 
-  // DO NOT MODIFY THE FOLLOWING CODE
-  // You can use the following code to navigate to the previous screen:
-  // ARTIST PAGE section C
-  // TODO: 3 place the code below in the proper Row or Column layout
-  Button(onClick = {
-    navController.navigate(Screen.Home.route + "/$id")
-  }) {
-    Text(text = stringResource(id = R.string.back))
+    // <--- Safely REMOVE the following code and ADD your code here --->
+    //  Text(text = "(D) Display Artist Profile and Bio here as per the design")
+
+    // DO NOT MODIFY THE FOLLOWING CODE
+    // You can use the following code to navigate to the previous screen:
+    // ARTIST PAGE section C
+    // TODO: 3 place the code below in the proper Row or Column layout
+
+
   }
-}
-
 
 @Composable
 fun ArtWall(
@@ -236,6 +282,7 @@ fun DisplayController(current: Int, move: (Int) -> Unit) {
   }
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomePage(navController: NavController) {
@@ -296,7 +343,7 @@ fun HomePage(navController: NavController) {
 @Composable
 fun ArtSpaceAppPreview() {
   ArtSpaceTheme {
-    HomePage(rememberNavController())
-
+//    HomePage(rememberNavController())
+    ArtistPage(rememberNavController())
   }
 }
